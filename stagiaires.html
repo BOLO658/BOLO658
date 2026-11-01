@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace stagiaires</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+      background: #f5f7fa;
+      color: #222;
+      padding: 0 16px;
+    }
+    header {
+      max-width: 60rem;
+      margin: 0 auto;
+      padding: 1.2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    header a { color: #2563eb; text-decoration: none; }
+    main { max-width: 60rem; margin: 0 auto; padding-bottom: 3rem; }
+    h1 { font-size: 2rem; margin: 0.5rem 0; }
+    h2 { font-size: 1.15rem; margin: 0 0 0.8rem; }
+    p.muted { color: #555; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.4rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .login { max-width: 24rem; margin: 3rem auto; }
+    label { display: block; font-size: 0.9rem; margin: 0.9rem 0 0.3rem; }
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.2rem;
+      padding: 0.7rem 1.4rem;
+      background: #2563eb;
+      color: #fff;
+      border: 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button.secondary { background: #e2e8f0; color: #222; margin: 0; }
+    .error { color: #b91c1c; font-size: 0.9rem; min-height: 1.2em; margin: 0.6rem 0 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    ul { margin: 0; padding-left: 1.1rem; }
+    li { margin: 0.35rem 0; }
+    .tasks { list-style: none; padding: 0; }
+    .tasks label { display: flex; gap: 0.5rem; align-items: center; margin: 0; font-size: 1rem; }
+    .tasks input:checked + span { text-decoration: line-through; color: #888; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    td { padding: 0.35rem 0; border-bottom: 1px solid #eef2f7; vertical-align: top; }
+    td:first-child { font-weight: 600; width: 6.5rem; }
+    .progress { height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 0.8rem; overflow: hidden; }
+    .progress div { height: 100%; background: #2563eb; width: 0; transition: width .2s; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">← Accueil</a>
+    <button id="logout" class="secondary" hidden>Se déconnecter</button>
+  </header>
+
+  <main>
+    <!-- Connexion -->
+    <section id="login-view" class="card login">
+      <h1>Espace stagiaires</h1>
+      <p class="muted">Connecte-toi avec ton prénom et le code d'accès remis par ton tuteur.</p>
+      <form id="login-form">
+        <label for="name">Prénom</label>
+        <input id="name" type="text" autocomplete="given-name" required>
+        <label for="code">Code d'accès</label>
+        <input id="code" type="password" required>
+        <p class="error" id="error"></p>
+        <button type="submit">Ouvrir ma session</button>
+      </form>
+    </section>
+
+    <!-- Tableau de bord -->
+    <section id="dashboard-view" hidden>
+      <h1>Bonjour <span id="who"></span> 👋</h1>
+      <p class="muted">Bienvenue dans ta session de stage. Retrouve ici ton planning, tes missions et les ressources utiles.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>📅 Planning de la semaine</h2>
+          <table>
+            <tr><td>Lundi</td><td>Accueil, présentation de l'équipe</td></tr>
+            <tr><td>Mardi</td><td>Formation aux outils internes</td></tr>
+            <tr><td>Mercredi</td><td>Travail sur ta première mission</td></tr>
+            <tr><td>Jeudi</td><td>Point d'étape avec ton tuteur</td></tr>
+            <tr><td>Vendredi</td><td>Bilan de la semaine</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>✅ Mes missions</h2>
+          <ul class="tasks" id="tasks"></ul>
+          <div class="progress"><div id="bar"></div></div>
+          <p class="muted" id="progress-text"></p>
+        </div>
+
+        <div class="card">
+          <h2>📚 Ressources</h2>
+          <ul>
+            <li><a href="#">Livret d'accueil</a></li>
+            <li><a href="#">Règlement intérieur</a></li>
+            <li><a href="#">Guide des outils</a></li>
+            <li><a href="#">Modèle de rapport de stage</a></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>👤 Contacts</h2>
+          <table>
+            <tr><td>Tuteur</td><td>À compléter</td></tr>
+            <tr><td>RH</td><td>À compléter</td></tr>
+            <tr><td>Support</td><td>À compléter</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ⚠️ Code de démonstration : sur un site statique, ce code est visible
+    // dans la source de la page. Pour un vrai contrôle d'accès, il faut
+    // une authentification côté serveur.
+    const ACCESS_CODE = "STAGE2026";
+
+    const TASKS = [
+      "Lire le livret d'accueil",
+      "Configurer mon poste de travail",
+      "Rencontrer chaque membre de l'équipe",
+      "Réaliser ma première mission",
+      "Rédiger mon rapport d'étonnement"
+    ];
+
+    const store = {
+      get(k, area) { try { return (area || sessionStorage).getItem(k); } catch (e) { return null; } },
+      set(k, v, area) { try { (area || sessionStorage).setItem(k, v); } catch (e) {} },
+      del(k, area) { try { (area || sessionStorage).removeItem(k); } catch (e) {} }
+    };
+    let local; try { local = localStorage; } catch (e) { local = null; }
+
+    const $ = (id) => document.getElementById(id);
+    let currentUser = null;
+
+    function showDashboard(name) {
+      currentUser = name;
+      $("who").textContent = name;
+      $("login-view").hidden = true;
+      $("dashboard-view").hidden = false;
+      $("logout").hidden = false;
+      renderTasks();
+    }
+
+    function showLogin() {
+      currentUser = null;
+      $("login-view").hidden = false;
+      $("dashboard-view").hidden = true;
+      $("logout").hidden = true;
+      $("login-form").reset();
+      $("error").textContent = "";
+    }
+
+    function tasksKey() { return "stagiaire-taches:" + currentUser.toLowerCase(); }
+
+    function loadDone() {
+      try { return JSON.parse((local && store.get(tasksKey(), local)) || "[]"); }
+      catch (e) { return []; }
+    }
+
+    function renderTasks() {
+      const done = loadDone();
+      const list = $("tasks");
+      list.innerHTML = "";
+      TASKS.forEach((t, i) => {
+        const li = document.createElement("li");
+        const label = document.createElement("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = done.includes(i);
+        cb.addEventListener("change", () => {
+          const d = loadDone().filter((x) => x !== i);
+          if (cb.checked) d.push(i);
+          if (local) store.set(tasksKey(), JSON.stringify(d), local);
+          updateProgress(d.length);
+        });
+        const span = document.createElement("span");
+        span.textContent = t;
+        label.append(cb, span);
+        li.append(label);
+        list.append(li);
+      });
+      updateProgress(done.length);
+    }
+
+    function updateProgress(n) {
+      $("bar").style.width = Math.round((n / TASKS.length) * 100) + "%";
+      $("progress-text").textContent = n + " / " + TASKS.length + " missions terminées";
+    }
+
+    $("login-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = $("name").value.trim();
+      const code = $("code").value.trim();
+      if (code !== ACCESS_CODE) {
+        $("error").textContent = "Code d'accès incorrect.";
+        return;
+      }
+      store.set("stagiaire", name);
+      showDashboard(name);
+    });
+
+    $("logout").addEventListener("click", () => {
+      store.del("stagiaire");
+      showLogin();
+    });
+
+    const saved = store.get("stagiaire");
+    if (saved) showDashboard(saved); else showLogin();
+  </script>
+</body>
+</html>
